@@ -1,0 +1,116 @@
+643. Maximum Average Subarray I
+func findMaxAverage(nums []int, k int) float64 {
+    if len(nums) < k {
+        return 0
+    }
+
+    sum :=0
+    for i :=0;i < k ; i++ {
+        sum +=nums[i]
+    }
+
+    newSum := sum
+    for i := 0 ; i < len(nums)-k; i++ {
+        newSum = newSum - nums[i] + nums[i+k]
+        if sum < newSum {
+            sum = newSum
+        }
+    }
+
+    return float64(sum) / float64(k)
+}
+
+1456. Maximum Number of Vowels in a Substring of Given Length
+
+func maxVowels(s string, k int) int {
+    if len(s) < k {
+        return 0
+    }
+    maxVowel :=0
+    for i := 0; i < k;i++ {
+        maxVowel += vowelCount(s[i]) 
+    }
+
+    newVowel := maxVowel
+    for i:=0; i < len(s) -k ;i++ {
+        firstOne := vowelCount(s[i])
+        lastOne := vowelCount(s[i+k])
+        newVowel = newVowel + lastOne - firstOne
+        if newVowel > maxVowel {
+            maxVowel = newVowel
+        }
+    }
+    return maxVowel
+}
+
+func vowelCount(ch byte) int {
+    if ch == 'a' || 
+       ch == 'e' ||
+       ch == 'i' ||
+       ch == 'o' ||
+       ch == 'u' {
+        return 1
+       }
+    return 0
+}
+
+
+1004. Max Consecutive Ones after flipping k 0's
+
+func longestOnes(nums []int, k int) int {
+    max :=0
+    curr :=0
+    flipIndexes := make([]int, 0)
+    for i :=0 ; i < len(nums) ; i++ {
+        if nums[i] == 1 {
+            curr++
+            if curr > max {
+                max = curr
+            }
+        } else if len(flipIndexes) < k {
+            flipIndexes = append(flipIndexes, i)
+            curr++
+            if curr > max {
+                max = curr
+            }
+        } else {
+            if curr > max {
+                max = curr
+            }
+            if len(flipIndexes) != 0 {               
+               curr = i - flipIndexes[0]
+               flipIndexes = flipIndexes[1:]
+               flipIndexes = append(flipIndexes, i)
+            } else {
+                curr = 0
+            }
+        } 
+    }
+    return max
+}
+
+
+1493. Longest Subarray of 1's After Deleting One Element
+
+func longestSubarray(nums []int) int {
+    max :=0
+    lastDeleted := -1
+    currCount :=0
+    for i :=0; i < len(nums); i++ {
+        if nums[i] == 1 {
+            currCount++
+            if currCount > max {
+                max = currCount
+            }
+        } else {
+            if lastDeleted != -1 {
+                currCount = i - lastDeleted -1
+            }
+            lastDeleted = i
+        }
+    }
+    if lastDeleted == -1 {
+        max--
+    }
+    return max
+}
