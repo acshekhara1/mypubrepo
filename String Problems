@@ -1,0 +1,228 @@
+1768. Merge Strings Alternately
+
+func mergeAlternately(word1 string, word2 string) string {
+    retStr := ""
+    count1 := len(word1)
+    count2 := len(word2)
+
+    index1 := 0
+    index2 := 0
+    for {
+        var a,b  byte
+        if index1 >= count1 && index2 >= count2 {
+            break
+        }
+
+        if index1 < count1 {
+            a = word1[index1]
+            index1++
+            retStr += (string(a) )
+        }
+        if index2 < count2 {
+            b = word2[index2]
+            index2++
+            retStr += ( string(b) )
+        }
+    }
+    return retStr
+}
+
+1071. Greatest Common Divisor of Strings
+
+func gcdOfStrings(str1 string, str2 string) string {
+    count1:=len(str1)
+    count2:=len(str2)
+
+    if count2 > count1 {
+        return gcdOfStrings(str2, str1)
+    }
+    
+    for i := 0; i < count2 ; i++ {
+        if str1[i] != str2[i] {
+            return ""
+        }
+    }
+    if count1 == count2 {
+        return str2
+    }
+
+    return gcdOfStrings(str2, str1[count2:])
+}
+
+1431. Kids With the Greatest Number of Candies
+
+func kidsWithCandies(candies []int, extraCandies int) []bool {
+    max :=candies[0]
+    ret := make([]bool, len(candies))
+    for i:=1; i < len(candies) ; i++ {
+        if max < candies[i] {
+            max=candies[i]
+        }
+    }
+    for i:=0; i < len(candies) ; i++ {
+        if max <= (candies[i] + extraCandies) {
+           ret[i] = true
+        }
+    }
+    return ret
+}
+
+605. Can Place Flowers
+
+func canPlaceFlowers(flowerbed []int, n int) bool {    
+    if n == 0 {
+        return true
+    }
+
+    for i :=0 ; i < len(flowerbed) ; {
+        if  n == 0 {
+            return true
+        }
+        if flowerbed[i] == 1 {
+            i++
+            continue
+        }
+        if i ==0 {
+          if (len(flowerbed) == 1 || flowerbed[i+1] == 0) {
+            n--
+            i++
+          }
+         } else if i == len(flowerbed)-1 {
+             if flowerbed[i-1] == 0 {
+                n--
+                i++
+             }
+        } else {
+            if flowerbed[i-1] == 0 && flowerbed[i+1] == 0{
+                n--
+                i++
+             }
+        }
+        i++
+    }
+    return n <=0    
+}
+
+345. Reverse Vowels of a String
+
+func reverseVowels(s string) string {
+    var vowels []byte
+    for i :=0 ; i < len(s);i++ {
+        if isVowel(s[i]) {
+            vowels = append(vowels, s[i])
+        }
+    }
+    retStr :=""
+    j := len(vowels)-1 
+    for i :=0 ; i < len(s);i++ {
+        if isVowel(s[i]) {
+            retStr += string(vowels[j])
+            j--
+        } else {
+            retStr += string(s[i])
+        }
+    }
+    return retStr
+}
+
+func isVowel(c byte)bool {
+    return (c=='a' || c=='A' || c=='e' ||
+            c=='E' || c=='i' || c=='I' ||
+            c=='o' || c=='O' || c=='u' ||
+            c=='U')
+}
+
+151. Reverse Words in a String
+
+func reverseWords(s string) string {
+    strs:= strings.Split(s, " ")
+    retStr :=""
+    space := ""
+    for i := len(strs) -1 ;i >=0 ; i-- {
+        s := strings.TrimSpace(strs[i])
+        if s !="" {
+        retStr += space + s
+        space = " "
+        }
+    }
+    return retStr
+}
+
+func reverseString(s string) string {
+    retStr := []byte(s)
+    length := len(s)
+    for i :=0; i < length/2; i++{
+        retStr[i],retStr[length-i-1] = retStr[length-i-1], retStr[i]
+    }
+    return string(retStr)
+}
+
+238. Product of Array Except Self
+
+func productExceptSelf(nums []int) []int {
+    count := len(nums)
+    result:= make([]int, count)
+    leftProduct :=1
+    for i := 0 ; i < count ;i++{
+       result[i] = leftProduct
+       leftProduct *= nums[i]
+    }
+
+    rightProduct := 1
+    for i := count -1  ; i >= 0 ;i--{
+       result[i] *= rightProduct
+       rightProduct *= nums[i]
+    }
+    return result
+}
+
+334. Increasing Triplet Subsequence
+
+func increasingTriplet(nums []int) bool {
+   firstMin := math.MaxInt
+   secondMin := math.MaxInt
+    for i := 0 ; i < len(nums) ; i++ {
+        if nums[i] >  secondMin{
+            return true
+        }
+
+        if nums[i] <=  firstMin{
+            firstMin = nums[i]
+        } else if nums[i] <= secondMin {
+            secondMin = nums[i]
+        }
+
+    }
+    return false
+}
+
+443. String Compression
+
+func compress(chars []byte) int {
+    str := ""
+    currchar := chars[0]
+    currCount := 1
+    for i :=1 ; i < len(chars) ; i++ {
+        if chars[i] != currchar {
+            if currCount > 1 {
+              str += fmt.Sprintf("%s%d", string(currchar), currCount)
+            } else {
+              str += fmt.Sprintf("%s", string(currchar))
+            }
+            currCount=1
+            currchar = chars[i]
+        } else {
+            currCount++
+        }
+    }
+    if currCount > 1 {
+      str += fmt.Sprintf("%s%d", string(currchar), currCount)
+    } else {
+        str += fmt.Sprintf("%s", string(currchar))
+    }
+
+    for i := 0 ;i < len(str);i++ {
+        chars[i] = str[i]
+    }
+    return len(str)
+}
