@@ -1,0 +1,134 @@
+2215. Find the Difference of Two Arrays
+
+func findDifference(nums1 []int, nums2 []int) [][]int {
+    numsMap := map[int]int{}
+    for i :=0 ; i < len(nums1);i++ {
+        numsMap[nums1[i]] = i
+    }
+    arr2 := []int{}
+    nums2Map := map[int]int{}
+    addMap := map[int]int{}
+    for i :=0; i < len(nums2); i++ {
+        nums2Map[nums2[i]] = i        
+        if _, found := numsMap[nums2[i]]; !found {
+            if _, found2 := addMap[nums2[i]]; !found2 {
+               arr2 = append(arr2, nums2[i])
+                addMap[nums2[i]] = i  
+            }
+        }
+    }
+    arr1 := []int{}
+    add2Map := map[int]int{}
+    for i :=0; i < len(nums1); i++ {
+        if _, found := nums2Map[nums1[i]]; !found {
+            if _, found2 := add2Map[nums1[i]]; !found2 {
+               arr1 = append(arr1, nums1[i])
+                add2Map[nums1[i]] = i  
+            }
+        }
+    }
+
+    return [][]int {arr1, arr2}
+}
+
+1207. Unique Number of Occurrences
+
+func uniqueOccurrences(arr []int) bool {
+    occMap := map[int]int{}
+    for i :=0; i < len(arr);i++ {
+        count :=1       
+        if val, found := occMap[arr[i]]; found {
+            count = val+1
+        }
+        occMap[arr[i]] = count
+    }
+    countMap := map[int]int{}
+    for k,v := range occMap {
+        if _, found := countMap[v]; found {
+            return false
+        }
+        countMap[v] = k
+    }
+    return true
+}
+
+2390. Removing Stars From a String
+
+func removeStars(s string) string {
+    currIndex :=0
+    retBytes := make([]byte, len(s))
+    for i :=0;i < len(s); i++{
+        if s[i]== '*' {
+            if currIndex >0 {
+                currIndex--
+            }
+        } else {
+            retBytes[currIndex] = s[i]
+            currIndex++
+        }
+    }
+    return string(retBytes[:currIndex])
+}
+
+394. Decode String
+
+func decodeString(s string) string {
+  countStack := []int{}
+  stringStack := []string{}
+  k :=0
+  current := ""
+
+  for _, ch := range s {
+    if ch >= '0' && ch <= '9' {
+        k = k * 10 + int(ch-'0')
+        fmt.Println(k)
+    } else if ch == '[' {
+        fmt.Println(k)
+        countStack = append(countStack, k)
+        stringStack = append(stringStack, current)
+        k = 0
+        current = ""
+    } else if ch == ']' {
+        poppedString := stringStack[len(stringStack)-1]
+        stringStack = stringStack[:len(stringStack)-1]
+        num := countStack[len(countStack)-1]
+        countStack = countStack[:len(countStack)-1]
+        current = poppedString + strings.Repeat(current, num) 
+
+    } else {
+        current = current + string(ch)
+    }
+
+  }
+  return current
+}
+
+
+933. Number of Recent Calls
+
+type RecentCounter struct {
+    queue []int
+    lastExpired int
+}
+
+
+func Constructor() RecentCounter {
+    return RecentCounter{queue:make([]int, 0)}
+}
+
+
+func (this *RecentCounter) Ping(t int) int {
+    this.queue = append(this.queue, t)
+    count :=0
+    lastExpired:= this.lastExpired
+    for i:=this.lastExpired;i < len(this.queue); i++ {
+        if this.queue[i] < (t-3000) {
+            lastExpired = i
+        } else {
+            count++
+        }
+    }
+    this.lastExpired = lastExpired
+    return count
+}
+
