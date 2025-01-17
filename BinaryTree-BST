@@ -1,0 +1,145 @@
+
+
+199. Binary Tree Right Side View
+func rightSideView(root *TreeNode) []int {
+    ret := make([]int, 0)
+    currLevel :=0
+    processedLevel :=0
+
+    rightSideViewHelper(root, &ret, &processedLevel, currLevel)
+    
+    return ret   
+}
+
+func rightSideViewHelper(root *TreeNode, ret *[]int, processedLevel *int, currLevel int) {
+    if root == nil {
+        return
+    }
+    if currLevel == *processedLevel {
+        *ret = append(*ret, root.Val)
+        *processedLevel = *processedLevel +1
+    }
+    rightSideViewHelper(root.Right, ret, processedLevel, currLevel+1)
+    rightSideViewHelper(root.Left, ret, processedLevel, currLevel+1)
+}
+
+1161. Maximum Level Sum of a Binary Tree
+
+unc maxLevelSum(root *TreeNode) int {
+    if root == nil {
+        return 0
+    }
+
+    queues := [2][]*TreeNode{make([]*TreeNode,0),make([]*TreeNode,0)}
+    currQueue := queues[0]
+    currQueue = append(currQueue, root)
+    maxSum := root.Val
+    maxSumLevel := 1
+    currLevel := 1
+    currSum :=0
+    nextQueue := queues[1]
+
+    for {
+        if len(currQueue) == 0 {
+            break
+        }
+        node := currQueue[0]
+        currQueue = currQueue[1:]
+        currSum += node.Val
+        if node.Left != nil {
+            nextQueue = append(nextQueue, node.Left)
+        }
+        if node.Right != nil {
+            nextQueue = append(nextQueue, node.Right)
+        }
+
+        if len(currQueue) == 0 {
+            tmp := currQueue
+            currQueue = nextQueue
+            nextQueue = tmp
+
+            if currSum > maxSum {
+                maxSum = currSum
+                maxSumLevel = currLevel
+            }
+            currLevel++
+            currSum = 0
+        }        
+    }
+    return maxSumLevel
+}
+
+
+700. Search in a Binary Search Tree
+func searchBST(root *TreeNode, val int) *TreeNode {
+    if root == nil || root.Val ==val {
+        return root
+    }
+
+    if root.Val > val {
+        return searchBST(root.Left, val)
+    }
+    return searchBST(root.Right, val)
+}
+
+
+450. Delete Node in a BST
+
+func deleteNode(root *TreeNode, key int) *TreeNode {
+
+    curr := root
+    var prev  *TreeNode
+    for {
+        if curr == nil {
+            return root
+        }
+        if curr.Val == key {
+            break
+        }
+        prev = curr
+        if key > curr.Val {
+            curr = curr.Right
+        } else {
+            curr = curr.Left
+        }
+    }
+    // Found the node
+    if curr.Right == nil {
+        if prev == nil {
+            return curr.Left
+        }
+        if prev.Left == curr {
+            prev.Left = curr.Left
+        } else {
+            prev.Right = curr.Left
+        }
+        return root
+    }
+     if curr.Left == nil {
+        if prev == nil {
+            return curr.Right
+        }
+        if prev.Left == curr {
+            prev.Left = curr.Right
+        } else {
+            prev.Right = curr.Right
+        }
+        return root
+    }
+    var successorP *TreeNode
+    successor := curr.Right
+    for {
+        if successor.Left == nil {
+            break
+        }
+        successorP = successor
+        successor=successor.Left
+    }
+    if successorP != nil {
+        successorP.Left = successor.Right
+    } else {
+        curr.Right = successor.Right
+    }
+    curr.Val = successor.Val   
+    return root
+}
