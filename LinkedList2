@@ -1,0 +1,111 @@
+2095. Delete the Middle Node of a Linked List
+
+func deleteMiddle(head *ListNode) *ListNode {
+    if head == nil || head.Next == nil{
+        return nil
+    }
+    slowPtr := head
+    fastPtr := head
+    curr := slowPtr
+    for {
+        if fastPtr == nil || fastPtr.Next == nil {
+            break
+        }
+        curr = slowPtr
+        slowPtr = slowPtr.Next
+        fastPtr=fastPtr.Next.Next
+    }
+    curr.Next=slowPtr.Next
+    return head   
+}
+
+
+328. Odd Even Linked List
+
+func oddEvenList(head *ListNode) *ListNode {
+    if head == nil || head.Next == nil {
+        return head
+    }
+
+    list2 := head.Next
+    list1curr := head
+    list2curr := list2
+    ptr := list2curr.Next
+    currList :=1
+    for {
+        if ptr == nil {
+            break
+        }
+        if currList == 1 {
+            list1curr.Next = ptr
+            list1curr = ptr
+        } else {
+            list2curr.Next = ptr
+             list2curr = ptr
+        }
+        currList = (currList +1) %2
+        ptr = ptr.Next
+    }
+    list2curr.Next = nil
+    list1curr.Next = list2  
+    return head
+}
+
+206. Reverse Linked List
+
+func reverseList(head *ListNode) *ListNode {
+    if head == nil {
+        return head
+    }
+
+    var  newHead *ListNode
+    for ptr := head ; ptr != nil ; {
+        next := ptr.Next
+        ptr.Next = newHead
+        newHead= ptr
+        ptr = next
+    }
+    return newHead
+}
+
+2130. Maximum Twin Sum of a Linked List
+
+
+func pairSum(head *ListNode) int {
+    if head == nil {
+        return 0
+    }
+    slowPtr := head
+    fastPtr := head
+    for ; fastPtr != nil; {
+        slowPtr = slowPtr.Next
+        fastPtr = fastPtr.Next.Next
+    }
+
+    //Reverse the second list
+    list2 := reverseList(slowPtr)
+    max := 0
+    ptr1 := list2
+    ptr2 := head
+    for ; ptr1 != nil  ;{
+        sum := ptr1.Val + ptr2.Val
+        if sum > max {
+            max=sum
+        }
+        ptr1 = ptr1.Next
+        ptr2 = ptr2.Next
+    }
+    return max
+}
+
+func reverseList(head *ListNode) *ListNode {
+   var newHead *ListNode
+
+    for ptr := head; ptr!= nil; {
+      next := ptr.Next
+      ptr.Next = newHead
+      newHead = ptr
+      ptr = next
+   }
+   return newHead
+}
