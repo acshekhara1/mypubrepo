@@ -1,0 +1,175 @@
+104. Maximum Depth of Binary Tree
+
+func maxDepth(root *TreeNode) int {
+    if root == nil {
+        return 0
+    }
+    left := maxDepth(root.Left)
+    right := maxDepth(root.Right)
+    return max(left, right) +1    
+}
+
+func max(a,b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+872. Leaf-Similar Trees
+
+func leafSimilar(root1 *TreeNode, root2 *TreeNode) bool {
+    arr1 := make([]int, 0)
+    dfsHelper(root1,&arr1)
+
+    arr2 := make([]int, 0)
+    dfsHelper(root2,&arr2)
+
+    if len(arr1) != len(arr2) {
+        return false
+    }
+
+    for i := 0; i < len(arr1); i++ {
+        if arr1[i] != arr2[i] {
+            return false
+        }
+    }
+    return true
+}
+
+func dfsHelper(root *TreeNode, arr *[]int) {
+    if root == nil {
+        return
+    }
+    if root.Left == nil && root.Right == nil{
+        *arr = append(*arr, root.Val)
+        return
+    }
+    if root.Left != nil {
+        dfsHelper(root.Left, arr)
+    }
+    if root.Right != nil {
+        dfsHelper(root.Right, arr)
+    }
+}
+
+
+1448. Count Good Nodes in Binary Tree
+
+func goodNodes(root *TreeNode) int {
+    count :=0
+    if root == nil {
+        return 0
+    }
+    goodNodesHelper(root, root.Val, &count)
+    return count
+}
+
+func goodNodesHelper(root *TreeNode, max int, count *int) {
+    if root == nil {
+        return
+    }
+    if root.Val >= max {
+        *count = *count+1
+        max = root.Val
+    }
+    goodNodesHelper(root.Left, max, count)
+    goodNodesHelper(root.Right, max, count)
+}
+
+437. Path Sum III
+unc pathSum(root *TreeNode, targetSum int) int {
+    if root == nil {
+        return 0
+    }
+
+    count :=0
+    pathSumHelper(root, targetSum, &count, false)
+    return count
+    /*    
+    cnt := map[int]int{0: 1}
+	var dfs func(*TreeNode, int) int
+	dfs = func(node *TreeNode, s int) int {
+		if node == nil {
+			return 0
+		}
+		s += node.Val
+		ans := cnt[s-targetSum]
+		cnt[s]++
+		ans += dfs(node.Left, s) + dfs(node.Right, s)
+		cnt[s]--
+		return ans
+	}
+	return dfs(root, 0)
+    */
+}
+
+func pathSumHelper(root *TreeNode, targetSum int, count *int, parent bool) {
+     if root == nil {
+        return
+     }
+    
+    if root.Val == targetSum {
+        *count = *count+1
+    }
+    diff := targetSum - root.Val
+    if root.Left != nil {        
+        pathSumHelper(root.Left, diff, count, true)
+    }
+    if root.Right != nil {
+       pathSumHelper(root.Right, diff, count, true)    
+    }
+    if !parent {
+        if root.Left != nil {
+           pathSumHelper(root.Left, targetSum, count, false)
+        }
+        if root.Right != nil {
+           pathSumHelper(root.Right, targetSum, count, false)    
+        }
+    }
+}
+
+1372. Longest ZigZag Path in a Binary Tree
+
+func longestZigZag(root *TreeNode) int {
+    ret :=0
+    dfs(root, &ret,0,0)
+    return ret
+}
+
+func dfs(root * TreeNode, ret *int,  left, right int) {
+    if root==nil {
+        return 
+    }
+    *ret = max (*ret, max(left, right))
+    dfs(root.Left, ret, right+1, 0)
+    dfs(root.Right,ret,  0, left+1)
+}
+
+func max(a,b int) int {
+    if a> b {
+        return a        
+    }
+    return b
+}
+
+236. Lowest Common Ancestor of a Binary Tree
+
+func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+   
+   if root == nil || p == root || q == root {
+     return root
+   }
+   left := lowestCommonAncestor(root.Left, p, q)
+   right := lowestCommonAncestor(root.Right, p, q)
+
+   if left != nil && right != nil {
+    return root
+   }
+
+   if left != nil {
+    return left
+   }
+   return right
+}
+
