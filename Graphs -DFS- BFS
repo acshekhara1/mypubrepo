@@ -1,0 +1,206 @@
+841. Keys and Rooms
+
+func canVisitAllRooms(rooms [][]int) bool {
+    adjacencyMap := map[int][]int{}
+    for i :=0 ; i < len(rooms);i++ {
+        adjacencyMap[i] = rooms[i]
+    }
+    keysQueue := []int{0}
+    visitMap := map[int]int{}
+
+    for {
+        if len(keysQueue) == 0 {
+            break
+        }
+        curr := keysQueue[0]
+        keysQueue = keysQueue[1:]
+        if _, found := visitMap[curr] ; found {
+            continue
+        }
+        visitMap[curr] = curr
+        if keys, found := adjacencyMap[curr]; found {
+          keysQueue = append(keysQueue, keys...)
+        }
+    }
+    return len(visitMap) == len(rooms)
+}
+
+547. Number of Provinces
+
+func findCircleNum(isConnected [][]int) int {
+    provCount := len(isConnected[0])
+    provMap := map[int]int{}
+    for i:=0; i < provCount;i++ {
+        provMap[i] = i
+    }
+    totalProv := provCount
+    for i :=0; i < provCount; i ++ {
+        for j :=0; j < provCount ; j++ {
+            if isConnected[i][j] == 1 {
+                prov1, prov2 := provMap[i], provMap[j]
+                if prov1 != prov2 {
+                    minProv := min(prov1, prov2)
+                    provToUpdate := max(prov1, prov2)              
+                    // Mark all old Prov with new one
+                    for k := 0; k < provCount ; k ++ {
+                        if provMap[k] == provToUpdate {
+                          provMap[k] = minProv
+                        }
+                    }
+                   
+                    totalProv--
+                }
+            }
+        }
+    }
+    return totalProv
+}
+
+func min(a,b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+1466. Reorder Routes to Make All Paths Lead to the City Zero
+func minReorder(n int, connections [][]int) int {
+    type Path struct {
+        node      int
+        direction int
+    }
+    adjacencyMap := map[int][]Path{}
+    for i := 0 ; i < len(connections); i++ {
+  
+        src, dst := connections[i][0], connections[i][1]     
+        adjList := adjacencyMap[src]
+        adjList = append(adjList, Path{node:dst, direction:1})
+        adjacencyMap[src] =  adjList 
+
+        adjList = adjacencyMap[dst]
+        adjList = append(adjList, Path{node:src, direction:0})
+        adjacencyMap[dst] =  adjList 
+    }
+
+    visitMap := map[int]int{}
+    count :=0
+    queue := []Path{Path{node:0, direction:0}}
+    for {
+        if len(queue) == 0 {
+            break
+        }
+        currNode :=  queue[0]
+        queue = queue[1:]
+        if _, found:= visitMap[currNode.node]; found {
+            continue
+        }
+        visitMap[currNode.node] = n     
+        paths := adjacencyMap[currNode.node]
+        count += currNode.direction
+        for i, _ := range paths {            
+            queue = append(queue, paths[i])
+        }
+    }
+    return count
+}
+
+1926. Nearest Exit from Entrance in Maze
+
+func nearestExit(maze [][]byte, entrance []int) int {
+    queue := make([][]int, 0)
+    queue = append(queue, entrance)
+    m := len(maze)
+    n := len(maze[0])
+
+    steps :=-1
+    visitedMetrics := make([][]int, m)
+    for i :=0 ; i < m ; i++ {
+        visitedMetrics[i] = make([]int, n)
+    }
+    for {
+        if len(queue) == 0 {
+            break
+        }
+        currLoc := queue[0]
+        queue = queue[1:]
+        x , y := currLoc[0] , currLoc[1]
+        steps ++
+        visitedMetrics[x][y] = 1
+        fmt.Println(x,y)
+        if x== 0 || x == m-1 ||
+           y== 0 || y == n-1 {
+
+            if x != entrance[0] || y != entrance[1] {
+               return steps
+            }
+        }
+
+        if x != 0 && maze[x-1][y] == '.'  && visitedMetrics[x-1][y] == 0 {
+            queue = append(queue, []int {x-1,y})
+        }
+
+        if y !=0 && maze[x][y-1] == '.' && visitedMetrics[x][y-1] == 0{
+            queue = append(queue, []int {x,y-1})
+        }
+
+        if  x!= m-1 && maze[x+1][y] == '.' && visitedMetrics[x+1][y] == 0{
+            queue = append(queue, []int {x+1,y})
+        }
+
+        if y + 1 < n && maze[x][y+1] == '.' && visitedMetrics[x][y+1] == 0{
+            queue = append(queue, []int {x,y+1})
+        }
+    }
+    return -1
+}
+
+994. Rotting Oranges
+
+func orangesRotting(grid [][]int) int {
+    m := len(grid)
+    n := len(grid[0])
+
+    currCycle :=2
+    for {
+      newRotten :=0
+      for i := 0 ; i < m ;i++ {
+        for j :=0; j < n ; j++ {
+            if grid[i][j] == 0 {
+                continue
+            }
+      
+            if grid[i][j] == currCycle {
+                if i+1 < m && grid[i+1][j] == 1 {
+                    grid[i+1][j] = currCycle+1
+                    newRotten++
+                }
+                if i-1 >=0  && grid[i-1][j] == 1 {
+                    grid[i-1][j] = currCycle+1
+                    newRotten++
+                }
+                if j+1 < n && grid[i][j+1] == 1 {
+                    grid[i][j+1] = currCycle+1
+                    newRotten++
+                }
+                if j-1 >= 0 && grid[i][j-1] == 1 {
+                    grid[i][j-1] = currCycle+1
+                    newRotten++
+                }
+            }
+        }
+      }
+      if newRotten == 0 {
+        break
+      }
+      currCycle++
+    }
+    // check for good one
+    for i := 0 ; i < m ;i++ {
+        for j :=0; j < n ; j++ {
+            if grid[i][j] == 1 {
+                return -1
+            }
+        }
+    }
+    return currCycle-2
+}
